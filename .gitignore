@@ -1,0 +1,114 @@
+# =============================================================
+# Python / Backend
+# =============================================================
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+
+
+# =============================================================
+# Model files — never commit large binary files to git
+# =============================================================
+
+*.pt
+*.pth
+*.onnx
+*.pkl
+*.h5
+*.safetensors
+models/
+
+
+# =============================================================
+# Temporary ECG files
+# =============================================================
+
+*.dat
+*.hea
+test_records/
+tmp/
+
+
+# =============================================================
+# Node / Frontend
+# =============================================================
+
+node_modules/
+dist/
+build/
+.next/
+.nuxt/
+
+# Vite
+*.local
+vite.config.ts.timestamp-*
+
+# Package manager locks — keep only one, delete the rest
+# if you use npm keep package-lock.json and add:
+yarn.lock
+pnpm-lock.yaml
+# if you use yarn keep yarn.lock and add:
+# package-lock.json
+
+# Frontend environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+# =============================================================
+# OS files
+# =============================================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+
+# =============================================================
+# IDEs and editors
+# =============================================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+
+# =============================================================
+# Jupyter notebooks checkpoints
+# =============================================================
+
+.ipynb_checkpoints/
+*.ipynb

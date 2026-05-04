@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-multipart
+wfdb
+numpy
+torch
+pydantic
+pandas
+scikit-learn
