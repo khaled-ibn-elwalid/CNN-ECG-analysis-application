@@ -2,6 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from routers import auth
+from seed import init_db
+
 
 from routers import predict
 from services.model_service import load_model
@@ -17,6 +20,7 @@ async def lifespan(app: FastAPI):
     Startup: load model into memory once.
     Shutdown: nothing to clean up.
     """
+    init_db()
 
     print("Starting up — loading model...")
     load_model()
@@ -70,3 +74,5 @@ app.include_router(
 @app.get("/health", tags=["Health"])
 async def health():
     return {"status": "ok"}
+
+app.include_router(auth.router)

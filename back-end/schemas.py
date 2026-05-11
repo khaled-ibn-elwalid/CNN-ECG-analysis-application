@@ -23,3 +23,12 @@ class PredictionResponse(BaseModel):
     # before passing it here to prevent JSON serialization crashes!
     signal: list[list[float]]  # shape: [n_leads, n_samples]
     lead_names: list[str]
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

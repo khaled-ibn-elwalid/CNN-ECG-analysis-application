@@ -4,7 +4,10 @@ from services.validator import validate_ecg_files
 from services.preprocessor import preprocess
 from services.model_service import predict
 from schemas import PredictionResponse
-
+from sqlalchemy.orm import Session
+from fastapi import Depends, Form
+from database import get_db
+from models import Diagnosis
 
 # =========================================================
 # Router
@@ -19,8 +22,10 @@ router = APIRouter()
 
 @router.post("/predict", response_model=PredictionResponse)
 async def predict_ecg(
+    patient_id : int = Form(...),
     dat_file: UploadFile = File(...),
     hea_file: UploadFile = File(...),
+    db: Session = Depends(get_db),
 ):
     """
     Full prediction pipeline:
@@ -98,3 +103,10 @@ async def predict_ecg(
     response.lead_names = preprocessed["lead_names"]
 
     return response
+
+    diagnosis = Diagnosis(
+    patient_id=patient_id,
+    result=response.top_label,        # not response.predicted_class
+    confidence=response.top_confidence,  # not response.confidence
+    signal_path=None,
+)

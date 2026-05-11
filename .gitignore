@@ -112,3 +112,6 @@ Desktop.ini
 
 .ipynb_checkpoints/
 *.ipynb
+
+# Secrets
+.env
