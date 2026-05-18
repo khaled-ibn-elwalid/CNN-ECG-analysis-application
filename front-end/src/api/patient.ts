@@ -24,3 +24,11 @@ export const createPatient = async (patientData: PatientCreate): Promise<Patient
   const response = await apiClient.post<PatientResponse>("/patients/", patientData);
   return response.data;
 };
+
+/**
+ * delete patient from the database.
+ */
+
+export const deletePatient = async (id:number) : Promise<void> =>{
+  await apiClient.delete(`/patients/${id}`)
+};
