@@ -1,53 +1,57 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
+# Import your auth and db dependencies
+from database import get_db
+from dependencies import get_current_user
+from models import User, Diagnosis
+
+# Import your ML services and schemas
 from services.validator import validate_ecg_files
 from services.preprocessor import preprocess
 from services.model_service import predict
 from schemas import PredictionResponse
-from sqlalchemy.orm import Session
-from fastapi import Depends, Form
-from database import get_db
-from models import Diagnosis
+
+# Import patient service to verify the patient exists
+from services.patient_service import get_patient_by_id
 
 # =========================================================
-# Router
+# Router Setup
 # =========================================================
-
-router = APIRouter()
+router = APIRouter(prefix="/analysis", tags=["analysis"])
 
 
 # =========================================================
-# POST /predict
+# POST /analysis/predict
 # =========================================================
-
 @router.post("/predict", response_model=PredictionResponse)
 async def predict_ecg(
-    patient_id : int = Form(...),
+    # 1. CHANGED: patient_id is now optional and defaults to None
+    patient_id: int | None = Form(None), 
     dat_file: UploadFile = File(...),
     hea_file: UploadFile = File(...),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """
-    Full prediction pipeline:
-        1. Validate files
-        2. Preprocess signal
-        3. Run model inference
-        4. Assemble and return response
+    Full prediction pipeline (Supports Guest/Quick Analysis Mode):
     """
 
     # -----------------------------------------------
-    # 1. Validate files before reading bytes
-    # catches missing names, wrong extensions,
-    # mismatched stems and size violations early
+    # 1. Verify Patient Exists (ONLY if an ID was provided)
     # -----------------------------------------------
+    if patient_id is not None and patient_id > 0: 
+        patient = get_patient_by_id(db, patient_id)
+        if not patient:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Patient with ID {patient_id} not found."
+            )
 
+    # -----------------------------------------------
+    # 2. Validate & Read files
+    # -----------------------------------------------
     validate_ecg_files(dat_file, hea_file)
-
-    # -----------------------------------------------
-    # 2. Read bytes after validation passes
-    # we read after validation because UploadFile.size
-    # is available from headers without reading bytes
-    # -----------------------------------------------
 
     try:
         dat_bytes = await dat_file.read()
@@ -60,15 +64,10 @@ async def predict_ecg(
 
     # -----------------------------------------------
     # 3. Preprocess
-    # runs full pipeline: wfdb read, filter,
-    # resample, normalize, segment
-    # returns tensor + frontend signal + lead names
     # -----------------------------------------------
-
     try:
         preprocessed = preprocess(dat_bytes, hea_bytes)
     except HTTPException:
-        # re-raise clean HTTPExceptions from preprocessor
         raise
     except Exception as e:
         raise HTTPException(
@@ -78,14 +77,10 @@ async def predict_ecg(
 
     # -----------------------------------------------
     # 4. Run model inference
-    # returns PredictionResponse with empty
-    # signal and lead_names fields
     # -----------------------------------------------
-
     try:
         response = predict(preprocessed["tensor"])
     except HTTPException:
-        # re-raise 503 if model is not loaded
         raise
     except Exception as e:
         raise HTTPException(
@@ -94,19 +89,23 @@ async def predict_ecg(
         )
 
     # -----------------------------------------------
-    # 5. Fill in signal and lead names
-    # only the router has access to both
-    # preprocessor output and model response
+    # 5. Save Diagnosis to Database (ONLY if an ID was provided)
     # -----------------------------------------------
+    if patient_id is not None and patient_id > 0:
+        new_diagnosis = Diagnosis(
+            patient_id=patient_id,
+            result=response.top_label,
+            confidence=response.top_confidence,
+            signal_path=None,
+        )
+        db.add(new_diagnosis)
+        db.commit()
 
-    response.signal     = preprocessed["signal"]
+    # -----------------------------------------------
+    # 6. Fill in signal and return to frontend
+    # -----------------------------------------------
+    response.signal = preprocessed["signal"]
     response.lead_names = preprocessed["lead_names"]
 
+    # This always returns the result, whether it was saved to a patient or not!
     return response
-
-    diagnosis = Diagnosis(
-    patient_id=patient_id,
-    result=response.top_label,        # not response.predicted_class
-    confidence=response.top_confidence,  # not response.confidence
-    signal_path=None,
-)

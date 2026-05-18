@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import auth
 from seed import init_db
-
+from routers import patients
 
 from routers import predict
 from services.model_service import load_model
@@ -76,3 +76,5 @@ async def health():
     return {"status": "ok"}
 
 app.include_router(auth.router)
+app.include_router(patients.router)
+app.include_router(predict.router)
