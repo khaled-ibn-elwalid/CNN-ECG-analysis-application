@@ -104,6 +104,7 @@ export default function DropZone({ onSubmit, isLoading = false }: DropZoneProps)
 
   // ── Submit ───────────────────────────────────────────────
   const handleSubmit = () => {
+    
     if (files.dat && files.hea) onSubmit(files.dat, files.hea);
   };
 
@@ -203,15 +204,19 @@ export default function DropZone({ onSubmit, isLoading = false }: DropZoneProps)
               Clear
             </button>
           )}
-          <button
-            disabled={!isComplete || isLoading}
-            onClick={handleSubmit}
-            className="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white
-              shadow-sm transition-colors hover:bg-blue-700
-              disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
-          >
-            {isLoading ? 'Analysing...' : 'Run Analysis'}
-          </button>
+         <button
+  type="button"
+  disabled={!isComplete || isLoading}
+  onClick={(e) => {
+    e.stopPropagation();
+    handleSubmit();
+  }}
+  className="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white
+    shadow-sm transition-colors hover:bg-blue-700
+    disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400"
+>
+  {isLoading ? 'Analysing...' : 'Run Analysis'}
+</button>
         </div>
       </div>
     </div>

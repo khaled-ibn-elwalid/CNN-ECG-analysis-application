@@ -15,7 +15,7 @@ export const predictECG = async (
     formData.append("hea_file", heaFile);
 
     if (patientId !== undefined && patientId !== null && patientId > 0)
-    {formData.append("patientId",patientId.toString());}
+    {formData.append("patient_id",patientId.toString());}
 
     const response = await apiClient.post<PredictionResponse>(
         "/analysis/predict",

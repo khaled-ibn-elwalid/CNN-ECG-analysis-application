@@ -4,9 +4,6 @@ import { getToken, removeToken } from "../utils/auth"; // <-- Import the utiliti
 // 1. Create the base instance
 export const apiClient = axios.create({
   baseURL: "http://localhost:8000",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // 2. Request Interceptor: Attach the token automatically
