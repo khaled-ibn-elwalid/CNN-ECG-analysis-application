@@ -4,6 +4,7 @@ import type { PredictionResponse } from '../types';
 import DropZone from '../components/analysis/DropZone';
 import AnalysisLoader from '../components/analysis/AnalysisLoader';
 import ResultCard from '../components/analysis/ResultCard';
+import WaveformChart from '../components/analysis/WaveformChart/index';
 
 interface AnalysisVariables {
   datFile: File;
@@ -14,6 +15,9 @@ export default function DashboardPage() {
   const mutation = useMutation({
     mutationFn: ({ datFile, heaFile }: AnalysisVariables): Promise<PredictionResponse> =>
       predictECG(datFile, heaFile),
+    
+
+
   });
 
   const handleSubmit = (datFile: File, heaFile: File) => {
@@ -35,8 +39,16 @@ export default function DashboardPage() {
     <ResultCard
       result={mutation.data}
       onClose={() => mutation.reset()}
+
+      
     />
+    <WaveformChart
+            signal={mutation.data.signal}
+            leadNames={mutation.data.lead_names}
+          />
   </div>
+    
+
 )}
 
       {mutation.error && !mutation.isPending && (

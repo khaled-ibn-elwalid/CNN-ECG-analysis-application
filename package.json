@@ -1,8 +1,13 @@
 {
   "dependencies": {
+    "plotly.js-basic-dist": "^3.6.0",
     "react-router-dom": "^7.15.1"
   },
   "devDependencies": {
+    "@types/plotly.js": "^3.0.10",
+    "@types/plotly.js-basic-dist": "^1.54.4",
+    "@types/plotly.js-dist-min": "^2.3.4",
+    "@types/react-plotly.js": "^2.6.4",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.14",
     "tailwindcss": "^4.3.0"
