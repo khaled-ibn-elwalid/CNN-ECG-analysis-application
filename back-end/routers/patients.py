@@ -41,7 +41,7 @@ def get_patient(
     db : Session = Depends(get_db),
     current_user : User = Depends(get_current_user),
 ):
-    patient - get_patient_by_id (db, patient_id)
+    patient = get_patient_by_id (db, patient_id)
     if not patient:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

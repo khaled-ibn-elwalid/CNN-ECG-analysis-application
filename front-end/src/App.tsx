@@ -18,6 +18,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+
+
 // ---------------------------------------------------------
 // 2. The Main App Component
 // ---------------------------------------------------------
