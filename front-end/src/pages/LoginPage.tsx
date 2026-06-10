@@ -24,13 +24,12 @@ export const LoginPage = () => {
             login(data.access_token);
             navigate("/dashboard");
             
-        } catch (err: any) {
-            const message = 
-                err?.response?.data?.detail ?? "Invalid username or password. Please try again.";
-            setError(message);
-        } finally {
-            setIsLoading(false);
-        }
+        } catch (err) {
+  const message = err instanceof Error
+    ? err.message
+    : 'Invalid username or password. Please try again.';
+  setError(message);
+}
     };
 
    return (

@@ -4,6 +4,7 @@ import { LayoutDashboard, Users, LogOut, Activity } from 'lucide-react';
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router";
 import { getToken } from '../../utils/auth';
+import { useMemo } from 'react';
 
 export default function Sidebar() {
   const { logout } = useAuth();
@@ -13,24 +14,24 @@ const handleLogout = () => {
     logout();
     navigate('/login');
 };
-  const [username, setUsername] = useState('Admin');
+ 
 
   // Decode JWT to extract the 'sub' field on mount
-  useEffect(() => {
-    const token = getToken(); // Use the exact key you defined in src/utils/auth.ts
-    if (token) {
-      try {
-        // JWT is header.payload.signature. We want the payload (index 1).
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.sub) {
-          // Capitalize the first letter
-          setUsername(payload.sub.charAt(0).toUpperCase() + payload.sub.slice(1));
-        }
-      } catch (error) {
-        console.error("Failed to decode token for username");
-      }
+  
+
+const username = useMemo(() => {
+  const token = getToken();
+  if (!token) return 'Admin';
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    if (payload.sub) {
+      return payload.sub.charAt(0).toUpperCase() + payload.sub.slice(1);
     }
-  }, []);
+  } catch (_) {
+    // silent fail
+  }
+  return 'Admin';
+}, []);
 
   const doctorName = `Dr. ${username}`;
 

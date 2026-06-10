@@ -16,10 +16,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // 3. Create the Provider Component (The Wrapper)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!getToken());
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // When the app first loads, check if they already have a VIP pass in their pocket
+
+  /*
   useEffect(() => {
     const token = getToken();
     if (token) {
@@ -28,13 +30,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false); // We are done checking
   }, []);
 
-  // The function to call when they successfully log in
+  };
+  */
+
   const login = (token: string) => {
-    setStorageToken(token); // Save to localStorage
-    setIsAuthenticated(true); // Update global state
+    setStorageToken(token);
+    setIsAuthenticated(true);
   };
 
   // The function to call when they hit the "Logout" button
+
   const logout = () => {
     removeToken(); // Delete from localStorage
     setIsAuthenticated(false); // Update global state

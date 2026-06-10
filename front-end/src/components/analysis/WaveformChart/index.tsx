@@ -62,7 +62,7 @@ export default function WaveformChart({ signal, leadNames }: WaveformChartProps)
         displaylogo: false,
       }
     );
-  }, [selectedLeadIndex]);
+  }, [selectedLeadIndex, selectedSignal, selectedLeadName, timeAxis]);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-6">
