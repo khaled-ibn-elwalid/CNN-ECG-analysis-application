@@ -4,9 +4,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import auth
 from seed import init_db
+from routers import patients
 
-
-from routers import predict
+from routers import analysis
 from services.model_service import load_model
 
 
@@ -60,12 +60,6 @@ app.add_middleware(
 # Routes
 # =========================================================
 
-app.include_router(
-    predict.router,
-    prefix = "",
-    tags   = ["Prediction"],
-)
-
 
 # =========================================================
 # Health check
@@ -76,3 +70,5 @@ async def health():
     return {"status": "ok"}
 
 app.include_router(auth.router)
+app.include_router(patients.router)
+app.include_router(analysis.router)

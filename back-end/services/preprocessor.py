@@ -8,6 +8,8 @@ from fractions import Fraction
 from scipy.signal import butter, filtfilt, iirnotch, resample_poly
 from sklearn.preprocessing import StandardScaler
 from fastapi import HTTPException
+# Import patient service to verify the patient exists
+from services.patient_service import get_patient_by_id
 
 
 # =========================================================

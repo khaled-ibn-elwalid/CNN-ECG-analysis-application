@@ -62,7 +62,7 @@ class Diagnosis(Base):
 
     result = Column(String, nullable=False)
     confidence = Column(Float, nullable=False)
-    signal_path = Column(String, nullable=False)
+    signal_path = Column(String, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
